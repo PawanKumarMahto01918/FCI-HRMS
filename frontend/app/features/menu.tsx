@@ -2,6 +2,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useAppTheme } from '../../context/ThemeContext';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 
 const menuItems = [
@@ -10,39 +11,48 @@ const menuItems = [
   { id: 'attendance', title: 'My Attendance', icon: 'calendar-outline', route: '/features/attendance' },
   { id: 'leave', title: 'Leave Balance', icon: 'document-text-outline', route: '/features/leave-balance' },
   { id: 'notifications', title: 'Notifications', icon: 'notifications-outline', route: '/features/notifications' },
+  { id: 'settings', title: 'Settings', icon: 'settings-outline', route: '/features/settings' },
+  { id: 'support', title: 'Contact Support', icon: 'headset-outline', route: '/features/support' },
+  { id: 'privacy', title: 'Privacy Policy', icon: 'shield-checkmark-outline', route: '/features/privacy' },
+  { id: 'terms', title: 'Terms & Conditions', icon: 'document-lock-outline', route: '/features/terms' },
 ];
 
 export default function MenuScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, isDark } = useAppTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* Title Row */}
-      <View style={styles.titleRow}>
+      <View style={[styles.titleRow, { backgroundColor: colors.background }]}>
         <View style={styles.titleLeft}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="close" size={28} color="#111" />
+            <Ionicons name="close" size={28} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>Menu</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Menu</Text>
         </View>
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
           {menuItems.map((item, index) => (
             <TouchableOpacity 
               key={item.id} 
-              style={[styles.menuItem, index === menuItems.length - 1 && styles.lastMenuItem]}
+              style={[
+                styles.menuItem, 
+                index === menuItems.length - 1 && styles.lastMenuItem,
+                { borderBottomColor: colors.border }
+              ]}
               onPress={() => router.push(item.route as any)}
             >
               <View style={styles.menuItemLeft}>
-                <View style={styles.iconCircle}>
+                <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                   <Ionicons name={item.icon as any} size={22} color="#046835" />
                 </View>
-                <Text style={styles.menuItemText}>{item.title}</Text>
+                <Text style={[styles.menuItemText, { color: colors.text }]}>{item.title}</Text>
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#CCC" />
+              <Ionicons name="chevron-forward" size={20} color={colors.textSecondary} />
             </TouchableOpacity>
           ))}
         </View>

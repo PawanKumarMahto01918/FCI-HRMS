@@ -1,27 +1,49 @@
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, RefreshControl } from 'react-native';
+import { useState, useCallback } from 'react';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
 import DashboardGrid from '../../components/dashboard/DashboardGrid';
+import { useAppTheme } from '../../context/ThemeContext';
 
 export default function DashboardScreen() {
   // userName passed from login via router params
   const { userName } = useLocalSearchParams<{ userName?: string }>();
   const displayName = userName ? userName.toUpperCase() : 'USER';
-
+  const { colors, isDark } = useAppTheme();
   const insets = useSafeAreaInsets();
+  
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    // Simulate network request
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       <ScrollView
-        style={styles.scroll}
+        style={[styles.scroll, { backgroundColor: colors.background }]}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollContent}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#046835']} // Brand green for the spinner
+            tintColor={colors.textSecondary} // For iOS
+            title="Pull to refresh..."
+            titleColor={colors.textSecondary}
+          />
+        }
       >
         {/* Welcome Section */}
-        <View style={styles.welcomeSection}>
+        <View style={[styles.welcomeSection, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
           <Text style={styles.dashboardLabel}>Employee Dashboard</Text>
-          <Text style={styles.welcomeText}>Welcome {displayName} !</Text>
+          <Text style={[styles.welcomeText, { color: colors.text }]}>Welcome {displayName} !</Text>
         </View>
 
         {/* Feature Grid */}
@@ -29,8 +51,8 @@ export default function DashboardScreen() {
       </ScrollView>
 
       {/* Footer */}
-      <View style={styles.footer}>
-        <Text style={styles.footerText}>
+      <View style={[styles.footer, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+        <Text style={[styles.footerText, { color: colors.textSecondary }]}>
           Copyright ©  2024 FCI India. All rights reserved.
         </Text>
       </View>

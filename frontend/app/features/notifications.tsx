@@ -1,43 +1,70 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import DashboardHeader from '../../components/dashboard/DashboardHeader';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const dummyNotifications = [
   { id: 1, title: 'Leave Approved', desc: 'Your sick leave from 12 Dec to 14 Dec has been approved.', time: '2 hours ago', read: false },
   { id: 2, title: 'Salary Credited', desc: 'Your salary for November has been successfully credited.', time: '1 day ago', read: false },
-  { id: 3, title: 'Holiday Alert', desc: 'Upcoming holiday on 25 Dec for Christmas.', time: '3 days ago', read: true },
-  { id: 4, title: 'Policy Update', desc: 'Please review the updated remote work policy.', time: '1 week ago', read: true },
+  { id: 3, title: 'Meeting Scheduled', desc: 'You have a departmental review meeting at 3:00 PM tomorrow.', time: '1 day ago', read: false },
+  { id: 4, title: 'Holiday Alert', desc: 'Upcoming holiday on 25 Dec for Christmas.', time: '3 days ago', read: true },
+  { id: 5, title: 'Policy Update', desc: 'Please review the updated remote work policy by Friday.', time: '1 week ago', read: true },
+  { id: 6, title: 'System Maintenance', desc: 'HRMS portal will be down for maintenance from 2:00 AM to 4:00 AM this Saturday.', time: '1 week ago', read: true },
+  { id: 7, title: 'Document Required', desc: 'Please upload your latest investment proofs for tax declarations.', time: '2 weeks ago', read: true },
 ];
 
 export default function NotificationsScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, isDark } = useAppTheme();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* Title Row */}
-      <View style={styles.titleRow}>
+      <View style={[styles.titleRow, { backgroundColor: colors.background }]}>
         <View style={styles.titleLeft}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color="#111" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>Notifications</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Notifications</Text>
         </View>
       </View>
 
-      <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
+      <ScrollView 
+        style={styles.scroll} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#046835']}
+            tintColor={colors.textSecondary}
+            title="Pull to refresh..."
+            titleColor={colors.textSecondary}
+          />
+        }
+      >
+        <View style={[styles.card, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
           {dummyNotifications.map((notif, index) => (
-            <View key={notif.id} style={[styles.notifItem, index === dummyNotifications.length - 1 && styles.lastItem]}>
+            <View key={notif.id} style={[styles.notifItem, index === dummyNotifications.length - 1 && styles.lastItem, { borderBottomColor: colors.border }]}>
               <View style={styles.iconWrapper}>
-                <Ionicons name="notifications" size={20} color={notif.read ? '#999' : '#046835'} />
+                <Ionicons name="notifications" size={20} color={notif.read ? colors.textSecondary : (isDark ? colors.icon : '#046835')} />
               </View>
               <View style={styles.contentWrapper}>
-                <Text style={[styles.notifTitle, !notif.read && styles.unreadText]}>{notif.title}</Text>
-                <Text style={styles.notifDesc}>{notif.desc}</Text>
-                <Text style={styles.notifTime}>{notif.time}</Text>
+                <Text style={[styles.notifTitle, { color: colors.text }, !notif.read && { fontFamily: 'Roboto_700Bold' }]}>{notif.title}</Text>
+                <Text style={[styles.notifDesc, { color: colors.textSecondary }]}>{notif.desc}</Text>
+                <Text style={[styles.notifTime, { color: colors.textSecondary }]}>{notif.time}</Text>
               </View>
               {!notif.read && <View style={styles.unreadDot} />}
             </View>
@@ -112,7 +139,6 @@ const styles = StyleSheet.create({
   },
   unreadText: {
     fontFamily: 'Roboto_700Bold',
-    color: '#111',
   },
   notifDesc: {
     fontSize: 13,

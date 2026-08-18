@@ -3,12 +3,14 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppTheme } from '../../context/ThemeContext';
 import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import { useState, useEffect } from 'react';
 
 export default function ProfileScreen() {
   const insets = useSafeAreaInsets();
   const [userName, setUserName] = useState('USER');
+  const { colors, isDark } = useAppTheme();
 
   useEffect(() => {
     AsyncStorage.getItem('userSession').then(session => {
@@ -31,52 +33,52 @@ export default function ProfileScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* Title Row */}
-      <View style={styles.titleRow}>
+      <View style={[styles.titleRow, { backgroundColor: colors.background }]}>
         <View style={styles.titleLeft}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color="#111" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>My Profile</Text>
+          <Text style={[styles.title, { color: colors.text }]}>My Profile</Text>
         </View>
       </View>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
-        <View style={styles.card}>
-          <View style={styles.profileHeader}>
-            <View style={styles.avatarLarge}>
-              <Ionicons name="person" size={50} color="#888" />
+        <View style={[styles.card, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
+          <View style={[styles.profileHeader, { borderBottomColor: colors.border }]}>
+            <View style={[styles.avatarLarge, { backgroundColor: colors.background, borderColor: colors.border }]}>
+              <Ionicons name="person" size={50} color={colors.icon} />
             </View>
-            <Text style={styles.profileName}>{userName.toUpperCase()}</Text>
-            <Text style={styles.profileDesignation}>Software Engineer</Text>
+            <Text style={[styles.profileName, { color: colors.text }]}>{userName.toUpperCase()}</Text>
+            <Text style={[styles.profileDesignation, { color: colors.textSecondary }]}>Software Engineer</Text>
           </View>
 
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Account Details</Text>
+            <Text style={[styles.sectionTitle, { color: colors.text }]}>Account Details</Text>
             
             <View style={styles.detailRow}>
-              <Ionicons name="mail-outline" size={20} color="#555" />
+              <Ionicons name="mail-outline" size={20} color={colors.icon} />
               <View style={styles.detailTextContainer}>
-                <Text style={styles.detailLabel}>Email</Text>
-                <Text style={styles.detailValue}>test@test.com</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Email</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>test@test.com</Text>
               </View>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="call-outline" size={20} color="#555" />
+              <Ionicons name="call-outline" size={20} color={colors.icon} />
               <View style={styles.detailTextContainer}>
-                <Text style={styles.detailLabel}>Phone Number</Text>
-                <Text style={styles.detailValue}>+91 9876543210</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Phone Number</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>+91 9876543210</Text>
               </View>
             </View>
 
             <View style={styles.detailRow}>
-              <Ionicons name="business-outline" size={20} color="#555" />
+              <Ionicons name="business-outline" size={20} color={colors.icon} />
               <View style={styles.detailTextContainer}>
-                <Text style={styles.detailLabel}>Department</Text>
-                <Text style={styles.detailValue}>IT</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Department</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>IT</Text>
               </View>
             </View>
           </View>

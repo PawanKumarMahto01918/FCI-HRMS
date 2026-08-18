@@ -3,6 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useAppTheme } from '../../context/ThemeContext';
 
 interface DashboardHeaderProps {
   userName?: string;
@@ -21,9 +22,10 @@ export default function DashboardHeader({
 }: DashboardHeaderProps) {
   const insets = useSafeAreaInsets();
   const topPadding = paddingTop || insets.top;
+  const { colors } = useAppTheme();
 
   return (
-    <View style={[styles.container, { paddingTop: topPadding + 12 }]}>
+    <View style={[styles.container, { paddingTop: topPadding + 12, backgroundColor: colors.card, borderBottomColor: colors.border }]}>
       {/* Left — Hamburger / Home / None + Logo */}
       <View style={styles.left}>
         {leftIcon !== 'none' && (
@@ -31,7 +33,7 @@ export default function DashboardHeader({
             style={styles.iconBtn} 
             onPress={onLeftIconPress ? onLeftIconPress : () => router.push('/features/menu' as any)}
           >
-            <Ionicons name={leftIcon} size={leftIcon === 'home' ? 26 : 30} color={leftIcon === 'home' ? '#046835' : '#333'} />
+            <Ionicons name={leftIcon} size={leftIcon === 'home' ? 26 : 30} color={leftIcon === 'home' ? '#046835' : colors.icon} />
           </TouchableOpacity>
         )}
         <Image 
@@ -48,7 +50,7 @@ export default function DashboardHeader({
       <View style={styles.right}>
         {/* Notification bell with badge */}
         <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/features/notifications' as any)}>
-          <Ionicons name="notifications-outline" size={26} color="#333" />
+          <Ionicons name="notifications-outline" size={26} color={colors.icon} />
           {notificationCount > 0 && (
             <View style={styles.badge}>
               <Text style={styles.badgeText}>
@@ -63,10 +65,10 @@ export default function DashboardHeader({
           style={styles.avatarRow} 
           onPress={() => router.push('/features/profile' as any)}
         >
-          <View style={styles.avatar}>
-            <Ionicons name="person" size={20} color="#888" />
+          <View style={[styles.avatar, { backgroundColor: colors.background, borderColor: colors.border }]}>
+            <Ionicons name="person" size={20} color={colors.icon} />
           </View>
-          <Ionicons name="chevron-down" size={16} color="#555" />
+          <Ionicons name="chevron-down" size={16} color={colors.textSecondary} />
         </TouchableOpacity>
       </View>
     </View>

@@ -1,6 +1,7 @@
 import { TouchableOpacity, Text, View, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { DashboardItem } from '../../constants/dashboardItems';
+import { useAppTheme } from '../../context/ThemeContext';
 
 interface DashboardCardProps {
   item: DashboardItem;
@@ -8,16 +9,18 @@ interface DashboardCardProps {
 }
 
 export default function DashboardCard({ item, onPress }: DashboardCardProps) {
+  const { colors, isDark } = useAppTheme();
+
   return (
     <TouchableOpacity
-      style={[styles.card, { borderColor: item.color }]}
+      style={[styles.card, { borderColor: isDark ? colors.border : item.color, backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}
       onPress={onPress}
       activeOpacity={0.75}
     >
-      <View style={[styles.iconWrapper, { backgroundColor: item.color + '15' }]}>
+      <View style={[styles.iconWrapper, { backgroundColor: item.color + (isDark ? '25' : '15') }]}>
         <Ionicons name={item.icon as any} size={30} color={item.color} />
       </View>
-      <Text style={styles.label} numberOfLines={3}>
+      <Text style={[styles.label, { color: colors.text }]} numberOfLines={3}>
         {item.label}
       </Text>
     </TouchableOpacity>

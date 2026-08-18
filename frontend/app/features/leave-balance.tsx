@@ -1,9 +1,9 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, RefreshControl } from 'react-native';
+import { useState, useCallback } from 'react';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import DashboardHeader from '../../components/dashboard/DashboardHeader';
-import { useState } from 'react';
+import { useAppTheme } from '../../context/ThemeContext';
 
 const leaveData = [
   { id: '1', count: '3.5', label: 'Casual Leave' },
@@ -32,48 +32,74 @@ export default function LeaveBalanceScreen() {
   const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<'balance' | 'applied'>('balance');
   const [expandedId, setExpandedId] = useState<string | null>('LA2636291');
+  const { colors, isDark } = useAppTheme();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 1500);
+  }, []);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       {/* Top Tabs */}
       <View style={styles.tabContainer}>
         <TouchableOpacity 
-          style={[styles.tab, activeTab === 'balance' ? styles.activeTab : styles.inactiveTab]}
+          style={[styles.tab, activeTab === 'balance' ? styles.activeTab : [styles.inactiveTab, { backgroundColor: isDark ? colors.card : '#E0E0E0' }]]}
           onPress={() => setActiveTab('balance')}
         >
-          <Text style={activeTab === 'balance' ? styles.activeTabText : styles.inactiveTabText}>
+          <Text style={[activeTab === 'balance' ? styles.activeTabText : styles.inactiveTabText, { color: activeTab === 'balance' ? '#fff' : colors.textSecondary }]}>
             Leave Balance
           </Text>
         </TouchableOpacity>
         <TouchableOpacity 
-          style={[styles.tab, activeTab === 'applied' ? styles.activeTab : styles.inactiveTab]}
+          style={[styles.tab, activeTab === 'applied' ? styles.activeTab : [styles.inactiveTab, { backgroundColor: isDark ? colors.card : '#E0E0E0' }]]}
           onPress={() => setActiveTab('applied')}
         >
-          <Text style={activeTab === 'applied' ? styles.activeTabText : styles.inactiveTabText}>
+          <Text style={[activeTab === 'applied' ? styles.activeTabText : styles.inactiveTabText, { color: activeTab === 'applied' ? '#fff' : colors.textSecondary }]}>
             Applied Leaves
           </Text>
         </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.scroll} contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
+      <ScrollView 
+        style={styles.scroll} 
+        contentContainerStyle={styles.scrollContent} 
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#046835']}
+            tintColor={colors.textSecondary}
+            title="Pull to refresh..."
+            titleColor={colors.textSecondary}
+          />
+        }
+      >
         {/* Title Row */}
-        <View style={styles.titleRow}>
-          <TouchableOpacity onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={24} color="#111" />
-          </TouchableOpacity>
-          <Text style={styles.title}>
-            {activeTab === 'balance' ? 'Leave Type' : 'Availed Leave'}
-          </Text>
+        <View style={[styles.titleRow, { backgroundColor: colors.background }]}>
+          <View style={styles.titleLeft}>
+            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
+              <Ionicons name="arrow-back" size={24} color={colors.text} />
+            </TouchableOpacity>
+            <Text style={[styles.title, { color: colors.text }]}>
+              {activeTab === 'balance' ? 'Leave Type' : 'Availed Leave'}
+            </Text>
+          </View>
         </View>
 
         {/* Content based on Active Tab */}
         {activeTab === 'balance' ? (
           <View style={styles.grid}>
             {leaveData.map((item) => (
-              <View key={item.id} style={styles.card}>
-                <Text style={styles.countText}>{item.count}</Text>
-                <Text style={styles.labelText}>{item.label}</Text>
+              <View key={item.id} style={[styles.card, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
+                <Text style={[styles.countText, { color: colors.text }]}>{item.count}</Text>
+                <Text style={[styles.labelText, { color: colors.textSecondary }]}>{item.label}</Text>
               </View>
             ))}
           </View>
@@ -84,58 +110,58 @@ export default function LeaveBalanceScreen() {
               return (
                 <TouchableOpacity 
                   key={item.id} 
-                  style={styles.listItem}
+                  style={[styles.listItem, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}
                   activeOpacity={0.7}
                   onPress={() => setExpandedId(isExpanded ? null : item.id)}
                 >
                   <View style={styles.listHeaderRow}>
-                    <Text style={styles.leaveIdText}>Leave ID - {item.id}</Text>
-                    <Text style={styles.appliedOnText}>Applied on: {item.appliedOn}</Text>
+                    <Text style={[styles.leaveIdText, { color: colors.text }]}>Leave ID - {item.id}</Text>
+                    <Text style={[styles.appliedOnText, { color: colors.textSecondary }]}>Applied on: {item.appliedOn}</Text>
                   </View>
                   
                   {isExpanded && (
                     <View style={styles.expandedContent}>
                       <View style={styles.detailRow}>
                         <View style={styles.detailCol}>
-                          <Text style={styles.detailLabel}>Leave Type</Text>
-                          <Text style={styles.detailValue}>{item.type || 'Casual Leave'}</Text>
+                          <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Leave Type</Text>
+                          <Text style={[styles.detailValue, { color: colors.text }]}>{item.type || 'Casual Leave'}</Text>
                         </View>
                         <View style={styles.detailCol}>
                           <View style={styles.detailLabelRow}>
-                            <Ionicons name="calendar-outline" size={14} color="#333" />
-                            <Text style={styles.detailLabel}>From</Text>
+                            <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+                            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>From</Text>
                           </View>
-                          <Text style={styles.detailValue}>{item.from || item.appliedOn}</Text>
+                          <Text style={[styles.detailValue, { color: colors.text }]}>{item.from || item.appliedOn}</Text>
                         </View>
                         <View style={styles.detailCol}>
                           <View style={styles.detailLabelRow}>
-                            <Ionicons name="calendar-outline" size={14} color="#333" />
-                            <Text style={styles.detailLabel}>To</Text>
+                            <Ionicons name="calendar-outline" size={14} color={colors.textSecondary} />
+                            <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>To</Text>
                           </View>
-                          <Text style={styles.detailValue}>{item.to || item.appliedOn}</Text>
+                          <Text style={[styles.detailValue, { color: colors.text }]}>{item.to || item.appliedOn}</Text>
                         </View>
                       </View>
 
                       <View style={styles.detailRow}>
                         <View style={styles.fullWidthCol}>
-                          <Text style={styles.detailLabel}>Responsible / Officiating Employee in Absence</Text>
-                          <Text style={styles.detailValue}>—</Text>
+                          <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Responsible / Officiating Employee in Absence</Text>
+                          <Text style={[styles.detailValue, { color: colors.text }]}>—</Text>
                         </View>
                       </View>
 
                       <View style={styles.detailRowBottom}>
                         <View style={styles.bottomCol}>
-                          <Text style={styles.detailLabel}>Attachment</Text>
+                          <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Attachment</Text>
                           <View style={styles.attachmentRow}>
                             <View style={styles.pdfIcon}>
                               <Text style={styles.pdfText}>PDF</Text>
                             </View>
-                            <Text style={styles.attachmentLink}>View Document</Text>
+                            <Text style={[styles.attachmentLink, { color: isDark ? colors.textSecondary : '#046835' }]}>View Document</Text>
                           </View>
                         </View>
                         
                         <View style={styles.bottomCol}>
-                          <Text style={styles.detailLabel}>Status</Text>
+                          <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Status</Text>
                           <View style={styles.statusBadge}>
                             <Text style={styles.statusText}>Approved</Text>
                             <Ionicons name="chevron-forward" size={12} color="#fff" />
@@ -143,11 +169,11 @@ export default function LeaveBalanceScreen() {
                         </View>
 
                         <View style={styles.actionsCol}>
-                          <TouchableOpacity style={styles.actionBtnLeft}>
-                            <Ionicons name="eye" size={18} color="#333" />
+                          <TouchableOpacity style={[styles.actionBtnLeft, { backgroundColor: isDark ? colors.background : '#F0F0F0', borderRightColor: isDark ? colors.border : '#DDD' }]}>
+                            <Ionicons name="eye" size={18} color={colors.icon} />
                           </TouchableOpacity>
-                          <TouchableOpacity style={styles.actionBtnRight}>
-                            <Ionicons name="close" size={18} color="#333" />
+                          <TouchableOpacity style={[styles.actionBtnRight, { backgroundColor: isDark ? colors.background : '#F0F0F0' }]}>
+                            <Ionicons name="close" size={18} color={colors.icon} />
                           </TouchableOpacity>
                         </View>
                       </View>
@@ -192,7 +218,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   activeTab: {
-    backgroundColor: '#222',
+    backgroundColor: '#046835', // Brand green instead of dark grey
   },
   inactiveTab: {
     backgroundColor: '#E2E6E9',
@@ -219,6 +245,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     paddingVertical: 16,
     gap: 12,
+  },
+  titleLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  backBtn: {
+    marginRight: 16,
   },
   title: {
     fontSize: 16,

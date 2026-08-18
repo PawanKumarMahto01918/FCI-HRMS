@@ -2,19 +2,20 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { useAppTheme } from '../../context/ThemeContext';
 
 // Custom component for outlined form fields
-const OutlinedField = ({ label, value, icon, isDropdown = false, width = '100%' }: any) => (
+const OutlinedField = ({ label, value, icon, isDropdown = false, width = '100%', colors, isDark }: any) => (
   <View style={[styles.fieldContainer, { width }]}>
-    <View style={styles.floatingLabelContainer}>
-      <Text style={styles.floatingLabel}>{label}</Text>
+    <View style={[styles.floatingLabelContainer, { backgroundColor: colors.card }]}>
+      <Text style={[styles.floatingLabel, { color: colors.textSecondary }]}>{label}</Text>
     </View>
-    <View style={styles.fieldBox}>
-      <Text style={styles.fieldValue}>{value}</Text>
+    <View style={[styles.fieldBox, { borderColor: colors.border, backgroundColor: isDark ? colors.background : '#fff' }]}>
+      <Text style={[styles.fieldValue, { color: colors.text }]}>{value}</Text>
       {icon ? (
-        <Ionicons name={icon} size={20} color="#666" />
+        <Ionicons name={icon} size={20} color={colors.textSecondary} />
       ) : isDropdown ? (
-        <Ionicons name="chevron-down" size={20} color="#666" />
+        <Ionicons name="chevron-down" size={20} color={colors.textSecondary} />
       ) : null}
     </View>
   </View>
@@ -22,87 +23,88 @@ const OutlinedField = ({ label, value, icon, isDropdown = false, width = '100%' 
 
 export default function ApplyLeaveScreen() {
   const insets = useSafeAreaInsets();
+  const { colors, isDark } = useAppTheme();
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Title Row */}
-        <View style={styles.titleRow}>
+        <View style={[styles.titleRow, { backgroundColor: colors.background }]}>
           <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-            <Ionicons name="arrow-back" size={24} color="#111" />
+            <Ionicons name="arrow-back" size={24} color={colors.text} />
           </TouchableOpacity>
-          <Text style={styles.title}>Apply Leave</Text>
+          <Text style={[styles.title, { color: colors.text }]}>Apply Leave</Text>
         </View>
 
-        <View style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.card, shadowColor: isDark ? 'transparent' : '#000' }]}>
           {/* Employee Details Grid */}
           <View style={styles.detailsGrid}>
             <View style={styles.detailItem}>
-              <View style={styles.iconCircle}>
+              <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                 <Ionicons name="person-outline" size={22} color="#046835" />
               </View>
               <View>
-                <Text style={styles.detailLabel}>Employee name</Text>
-                <Text style={styles.detailValue}>152770</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Employee name</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>152770</Text>
               </View>
             </View>
 
             <View style={styles.detailItem}>
-              <View style={styles.iconCircle}>
+              <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                 <Ionicons name="business-outline" size={22} color="#046835" />
               </View>
               <View>
-                <Text style={styles.detailLabel}>Office</Text>
-                <Text style={styles.detailValue}>DO KARNAL</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Office</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>DO KARNAL</Text>
               </View>
             </View>
 
             <View style={styles.detailItem}>
-              <View style={styles.iconCircle}>
+              <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                 <Ionicons name="briefcase-outline" size={22} color="#046835" />
               </View>
               <View style={styles.detailTextWrapper}>
-                <Text style={styles.detailLabel}>Division</Text>
-                <Text style={styles.detailValue}>General Administration</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Division</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>General Administration</Text>
               </View>
             </View>
 
             <View style={styles.detailItem}>
-              <View style={styles.iconCircle}>
+              <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                 <Ionicons name="medal-outline" size={22} color="#046835" />
               </View>
               <View style={styles.detailTextWrapper}>
-                <Text style={styles.detailLabel}>Designation</Text>
-                <Text style={styles.detailValue}>Assistant General Manager</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Designation</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>Assistant General Manager</Text>
               </View>
             </View>
 
             <View style={styles.detailItem}>
-              <View style={styles.iconCircle}>
+              <View style={[styles.iconCircle, { backgroundColor: isDark ? '#04683525' : '#F4F9F6' }]}>
                 <Ionicons name="people-outline" size={22} color="#046835" />
               </View>
               <View>
-                <Text style={styles.detailLabel}>Cadre</Text>
-                <Text style={styles.detailValue}>General</Text>
+                <Text style={[styles.detailLabel, { color: colors.textSecondary }]}>Cadre</Text>
+                <Text style={[styles.detailValue, { color: colors.text }]}>General</Text>
               </View>
             </View>
           </View>
 
           {/* Form Section */}
-          <Text style={styles.sectionTitle}>Leave Type</Text>
-          <OutlinedField label="Leave Type" value="Casual Leave" isDropdown />
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Leave Type</Text>
+          <OutlinedField label="Leave Type" value="Casual Leave" isDropdown colors={colors} isDark={isDark} />
 
           <View style={styles.row}>
-            <OutlinedField label="From" value="18-12-2024" icon="calendar-outline" width="48%" />
-            <OutlinedField label="To" value="20-12-2024" icon="calendar-outline" width="48%" />
+            <OutlinedField label="From" value="18-12-2024" icon="calendar-outline" width="48%" colors={colors} isDark={isDark} />
+            <OutlinedField label="To" value="20-12-2024" icon="calendar-outline" width="48%" colors={colors} isDark={isDark} />
           </View>
 
-          <OutlinedField label="Session" value="Full Day" isDropdown />
+          <OutlinedField label="Session" value="Full Day" isDropdown colors={colors} isDark={isDark} />
 
-          <Text style={styles.sectionTitle}>Whether Going Out Of Station</Text>
-          <OutlinedField label="Whether Going Out Of Station" value="No" isDropdown />
-          <OutlinedField label="Reason" value="Others" isDropdown />
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Whether Going Out Of Station</Text>
+          <OutlinedField label="Whether Going Out Of Station" value="No" isDropdown colors={colors} isDark={isDark} />
+          <OutlinedField label="Reason" value="Others" isDropdown colors={colors} isDark={isDark} />
 
           {/* Bottom Padding */}
           <View style={{ height: 40 }} />
