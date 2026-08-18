@@ -19,7 +19,10 @@ export default function LoginScreen() {
         const session = await AsyncStorage.getItem('userSession');
         if (session) {
           // User is logged in, skip the login screen
-          router.replace('/dashboard' as any);
+          router.replace({
+            pathname: '/dashboard' as any,
+            params: { userName: session }
+          });
         } else {
           // User is not logged in, show the login form and fade it in
           setIsReady(true);

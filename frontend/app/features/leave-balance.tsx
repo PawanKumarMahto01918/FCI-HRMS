@@ -35,12 +35,6 @@ export default function LeaveBalanceScreen() {
 
   return (
     <View style={styles.container}>
-      <DashboardHeader 
-        notificationCount={84} 
-        paddingTop={insets.top} 
-        leftIcon="home"
-        onLeftIconPress={() => router.replace('/dashboard' as any)}
-      />
 
       {/* Top Tabs */}
       <View style={styles.tabContainer}>

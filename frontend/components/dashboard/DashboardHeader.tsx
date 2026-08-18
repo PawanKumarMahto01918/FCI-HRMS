@@ -2,6 +2,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 interface DashboardHeaderProps {
   userName?: string;
@@ -18,12 +19,18 @@ export default function DashboardHeader({
   leftIcon = 'menu',
   onLeftIconPress,
 }: DashboardHeaderProps) {
+  const insets = useSafeAreaInsets();
+  const topPadding = paddingTop || insets.top;
+
   return (
-    <View style={[styles.container, { paddingTop: paddingTop + 12 }]}>
+    <View style={[styles.container, { paddingTop: topPadding + 12 }]}>
       {/* Left — Hamburger / Home / None + Logo */}
       <View style={styles.left}>
         {leftIcon !== 'none' && (
-          <TouchableOpacity style={styles.iconBtn} onPress={onLeftIconPress}>
+          <TouchableOpacity 
+            style={styles.iconBtn} 
+            onPress={onLeftIconPress ? onLeftIconPress : () => router.push('/features/menu' as any)}
+          >
             <Ionicons name={leftIcon} size={leftIcon === 'home' ? 26 : 30} color={leftIcon === 'home' ? '#046835' : '#333'} />
           </TouchableOpacity>
         )}
@@ -40,7 +47,7 @@ export default function DashboardHeader({
       {/* Right — Bell + Avatar */}
       <View style={styles.right}>
         {/* Notification bell with badge */}
-        <TouchableOpacity style={styles.iconBtn} onPress={() => {}}>
+        <TouchableOpacity style={styles.iconBtn} onPress={() => router.push('/features/notifications' as any)}>
           <Ionicons name="notifications-outline" size={26} color="#333" />
           {notificationCount > 0 && (
             <View style={styles.badge}>
@@ -54,10 +61,7 @@ export default function DashboardHeader({
         {/* Avatar + Dropdown (Logout) */}
         <TouchableOpacity 
           style={styles.avatarRow} 
-          onPress={async () => {
-            await AsyncStorage.removeItem('userSession');
-            router.replace('/');
-          }}
+          onPress={() => router.push('/features/profile' as any)}
         >
           <View style={styles.avatar}>
             <Ionicons name="person" size={20} color="#888" />
@@ -104,8 +108,8 @@ const styles = StyleSheet.create({
     position: 'relative',
   },
   logoImage: {
-    width: 45,
-    height: 45,
+    width: 35,
+    height: 35,
   },
   badge: {
     position: 'absolute',

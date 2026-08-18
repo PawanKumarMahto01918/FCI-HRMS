@@ -2,7 +2,6 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
-import DashboardHeader from '../../components/dashboard/DashboardHeader';
 
 // Custom component for outlined form fields
 const OutlinedField = ({ label, value, icon, isDropdown = false, width = '100%' }: any) => (
@@ -26,11 +25,6 @@ export default function ApplyLeaveScreen() {
 
   return (
     <View style={styles.container}>
-      <DashboardHeader 
-        notificationCount={84} 
-        paddingTop={insets.top} 
-        leftIcon="none"
-      />
 
       <ScrollView style={styles.scroll} showsVerticalScrollIndicator={false}>
         {/* Title Row */}

@@ -1,7 +1,6 @@
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useLocalSearchParams } from 'expo-router';
-import DashboardHeader from '../../components/dashboard/DashboardHeader';
 import DashboardGrid from '../../components/dashboard/DashboardGrid';
 
 export default function DashboardScreen() {
@@ -13,7 +12,6 @@ export default function DashboardScreen() {
 
   return (
     <View style={styles.container}>
-      <DashboardHeader notificationCount={84} paddingTop={insets.top} />
 
       <ScrollView
         style={styles.scroll}

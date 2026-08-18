@@ -25,12 +25,6 @@ export default function AttendanceScreen() {
 
   return (
     <View style={styles.container}>
-      <DashboardHeader 
-        notificationCount={84} 
-        paddingTop={insets.top} 
-        leftIcon="home"
-        onLeftIconPress={() => router.replace('/dashboard' as any)}
-      />
 
       {/* Title Row */}
       <View style={styles.titleRow}>
